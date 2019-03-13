@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msp.dao.UserInfoDao">
+    <resultMap id="userInfoMap" type="com.msp.pojo.UserInfoDO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="gender" property="gender"/>
+        <result column="age" property="age"/>
+        <result column="telphone" property="telphone"/>
+        <result column="register_mode" property="registerMode"/>
+        <result column="third_id" property="thirdId"/>
+    </resultMap>
+
+    <select id="find" resultType="com.msp.pojo.UserInfoDO" resultMap="userInfoMap">
+      select msp_user_info.id, msp_user_info.name, msp_user_info.gender, msp_user_info.age, msp_user_info.telphone, msp_user_info.register_mode, msp_user_info.third_id
+      from msp_user_info
+      order by msp_user_info.id asc;
+    </select>
+    <select id="findById" resultType="com.msp.pojo.UserInfoDO" resultMap="userInfoMap">
+      select msp_user_info.id, msp_user_info.name, msp_user_info.gender, msp_user_info.age, msp_user_info.telphone, msp_user_info.register_mode, msp_user_info.third_id
+      from msp_user_info
+      where msp_user_info.id = #{id};
+    </select>
+    <insert id="add" useGeneratedKeys="false">
+      insert
+      into msp_user_info
+      values (#{user.id}, #{user.name}, #{user.gender}, #{user.age}, #{user.telphone}, #{user.registerMode}, #{user.thirdId});
+    </insert>
+    <update id="update" useGeneratedKeys="false">
+      update msp_user_info
+      <set>
+          <if test="null != #{user.id}">msp_user_info.id = #{user.id},</if>
+          <if test="null != #{user.name}">msp_user_info.name = #{user.name},</if>
+          <if test="null != #{user.gender}">msp_user_info.gender = #{user.gender},</if>
+          <if test="null != #{user.age}">msp_user_info.age = #{user.age},</if>
+          <if test="null != #{user.telphone}">msp_user_info.telphone = #{user.telphone},</if>
+          <if test="null != #{user.registerMode}">msp_user_info.register_mode = #{user.registerMode},</if>
+          <if test="null != #{user.thirdId}">msp_user_info.third_id = #{user.thirdId},</if>
+      </set>
+      where msp_user_info.id = #{user.id};
+    </update>
+    <delete id="delete">
+      delete
+      from msp_user_info
+      where msp_user_info.id = #{id};
+    </delete>
+</mapper>
