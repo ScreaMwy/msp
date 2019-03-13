@@ -1,11 +1,13 @@
 package com.msp.error;
 
 public enum BussinesError implements CommonError {
-    //通用錯誤訊息類型：00001
-    PARAMETER_VALIDATION_ERROR(00001, "參數唔合法"),
+    //通用錯誤訊息類型：100
+    PARAMETER_VALIDATION_ERROR(101, "參數唔合法"),
 
-    //10000開頭係用戶相關錯誤定義
-    USER_NOT_EXIST(10001, "用戶唔存在");
+    UNKNOWN_ERROR(105, "未知錯誤"),
+
+    //20000開頭係用戶相關錯誤定義
+    USER_NOT_EXIST(200, "用戶唔存在");
 
     private int errCode;
 
