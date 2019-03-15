@@ -7,6 +7,18 @@ import com.msp.response.CommonReturnType;
 import com.msp.error.BussinesError;
 import com.msp.error.BussinessException;
 
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Random;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
+
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.context.annotation.Scope;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +32,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.http.HttpStatus;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Random;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 
 @Controller("userController")
 @Scope(scopeName = "singleton")
@@ -47,7 +50,46 @@ public class UserController extends SuperController {
 
     public UserController() {}
 
-    @RequestMapping(path = {"/recieveOtp", "/recieveOtp/"}, method = {RequestMethod.POST}, consumes = CONTENT_ENCTYPE_FORM_ONE)
+    //用戶注冊接口
+    @RequestMapping(path = {"/registry", "/registry/"},
+                    method = {RequestMethod.GET, RequestMethod.POST})/*,
+                    consumes = {CONTENT_ENCTYPE_FORM_FRT})*/
+    @ResponseBody
+    public CommonReturnType userRegistry(@RequestParam(name = "name", required = true) String name,
+                                         @RequestParam(name = "gender", required = true) Integer gender,
+                                         @RequestParam(name = "age", required = true) Integer age,
+                                         @RequestParam(name = "telphone", required = true) String telphone,
+                                         @RequestParam(name = "password", required = true) String password,
+                                         @RequestParam(name = "otpCode", required = true) String otpCode
+    ) throws Exception {
+        //驗正手機號對應嘅otpcode相匹配
+        String sessionOtpCode = (String) request.getSession().getAttribute(telphone);
+
+        if (null != sessionOtpCode) {
+            if (!sessionOtpCode.equals(otpCode) || "" == otpCode
+                    || null == otpCode) {
+                throw new BussinessException(BussinesError.PARAMETER_VALIDATION_ERROR, "OTP唔匹配");
+            }
+        } else {
+            throw new BussinessException(BussinesError.PARAMETER_VALIDATION_ERROR, "OTP唔匹配");
+        }
+
+        //用戶嘅注冊流程
+        userModel = new UserModel();
+        userModel.setName(name);
+        userModel.setGender(gender);
+        userModel.setAge(age);
+        userModel.setTelphone(telphone);
+        userModel.setRegisterMode("byPhone");
+        //String test = MD5Encoder.encode(password.getBytes("utf-8"));
+        userModel.setEncryptPassword(Base64.encodeBase64String(password.getBytes("utf-8")));
+        userService.registry(userModel);
+        return CommonReturnType.create(userModel);
+    }
+
+    @RequestMapping(path = {"/recieveOtp", "/recieveOtp/"},
+                    method = {RequestMethod.POST})/*,
+                    consumes = {CONTENT_ENCTYPE_FORM_FRT})*/
     @ResponseBody
     public CommonReturnType getOtp(@RequestParam(name = "telphone", required = true) String telphone) {
         //随机获取otpCode
@@ -56,15 +98,13 @@ public class UserController extends SuperController {
         randCode += 10000;
         String otpCode = String.valueOf(randCode);
 
-        System.out.printf("randCode:%d\n", randCode);
-
         //将otpCode同用户嘅手机号绑定
         request.getSession().setAttribute(telphone, otpCode);
 
         //将ottcode通过短信api发送畀用户
         System.out.printf("telphone:%s\notpCode:%s\n", telphone, request.getSession().getAttribute(telphone));
 
-        return CommonReturnType.create(null);
+        return CommonReturnType.create("短信發送成功");
     }
 
     @RequestMapping(path = {"/findId", "/findId/"}, method = {RequestMethod.GET, RequestMethod.POST})

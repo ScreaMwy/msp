@@ -11,37 +11,138 @@
         <result column="third_id" property="thirdId"/>
     </resultMap>
 
+    <!-- -->
     <select id="find" resultType="com.msp.pojo.UserInfoDO" resultMap="userInfoMap">
-      select msp_user_info.id, msp_user_info.name, msp_user_info.gender, msp_user_info.age, msp_user_info.telphone, msp_user_info.register_mode, msp_user_info.third_id
-      from msp_user_info
-      order by msp_user_info.id asc;
+        select  msp_user_info.id,
+                msp_user_info.name,
+                msp_user_info.gender,
+                msp_user_info.age,
+                msp_user_info.telphone,
+                msp_user_info.register_mode,
+                msp_user_info.third_id
+        from msp_user_info
+        order by msp_user_info.id asc;
     </select>
+
+    <!-- -->
     <select id="findById" resultType="com.msp.pojo.UserInfoDO" resultMap="userInfoMap">
-      select msp_user_info.id, msp_user_info.name, msp_user_info.gender, msp_user_info.age, msp_user_info.telphone, msp_user_info.register_mode, msp_user_info.third_id
-      from msp_user_info
-      where msp_user_info.id = #{id};
+        select  msp_user_info.id,
+                msp_user_info.name,
+                msp_user_info.gender,
+                msp_user_info.age,
+                msp_user_info.telphone,
+                msp_user_info.register_mode,
+                msp_user_info.third_id
+        from msp_user_info
+        where msp_user_info.id = #{id};
     </select>
-    <insert id="add" useGeneratedKeys="false">
-      insert
-      into msp_user_info
-      values (#{user.id}, #{user.name}, #{user.gender}, #{user.age}, #{user.telphone}, #{user.registerMode}, #{user.thirdId});
+
+    <!-- -->
+    <select id="findByTelphone" resultType="com.msp.pojo.UserInfoDO" resultMap="userInfoMap">
+        select  msp_user_info.id,
+                msp_user_info.name,
+                msp_user_info.gender,
+                msp_user_info.age,
+                msp_user_info.telphone,
+                msp_user_info.register_mode,
+                msp_user_info.third_id
+        from msp_user_info
+        where msp_user_info.telphone = #{telphone};
+    </select>
+
+    <!-- -->
+    <!--<select id="" resultType="" resultMap="">-->
+    <!--</select>-->
+
+    <!-- -->
+    <select id="getMaxId" resultType="java.lang.Integer">
+        select max(msp_user_info.id)
+        from msp_user_info;
+    </select>
+
+
+
+
+    <!-- -->
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert
+        into msp_user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="null != #{user.name}">
+                name,
+            </if>
+            <if test="null != #{user.gender}">
+                gender,
+            </if>
+            <if test="null != #{user.age}">
+                age,
+            </if>
+            <if test="null != #{user.telphone}">
+                telphone,
+            </if>
+            <if test="null != #{user.registerMode}">
+                register_mode,
+            </if>
+            <if test="null != #{user.thirdId}">
+                third_id,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=");" suffixOverrides=",">
+            <if test="null != #{user.name}">
+                #{user.name},
+            </if>
+            <if test="null != #{user.gender}">
+                #{user.gender},
+            </if>
+            <if test="null != #{user.age}">
+                #{user.age},
+            </if>
+            <if test="null != #{user.telphone}">
+                #{user.telphone},
+            </if>
+            <if test="null != #{user.registerMode}">
+                #{user.registerMode},
+            </if>
+            <if test="null != #{user.thirdId}">
+                #{user.thirdId},
+            </if>
+        </trim>
     </insert>
-    <update id="update" useGeneratedKeys="false">
-      update msp_user_info
-      <set>
-          <if test="null != #{user.id}">msp_user_info.id = #{user.id},</if>
-          <if test="null != #{user.name}">msp_user_info.name = #{user.name},</if>
-          <if test="null != #{user.gender}">msp_user_info.gender = #{user.gender},</if>
-          <if test="null != #{user.age}">msp_user_info.age = #{user.age},</if>
-          <if test="null != #{user.telphone}">msp_user_info.telphone = #{user.telphone},</if>
-          <if test="null != #{user.registerMode}">msp_user_info.register_mode = #{user.registerMode},</if>
-          <if test="null != #{user.thirdId}">msp_user_info.third_id = #{user.thirdId},</if>
-      </set>
-      where msp_user_info.id = #{user.id};
+
+
+
+    <!-- -->
+    <update id="update" useGeneratedKeys="true" keyProperty="id">
+        update msp_user_info
+        <trim prefix="set" suffixOverrides=",">
+            <if test="null != #{user.name}">
+                msp_user_info.name = #{user.name},
+            </if>
+            <if test="null != #{user.gender}">
+                msp_user_info.gender = #{user.gender},
+            </if>
+            <if test="null != #{user.age}">
+                msp_user_info.age = #{user.age},
+            </if>
+            <if test="null != #{user.telphone}">
+                msp_user_info.telphone = #{user.telphone},
+            </if>
+            <if test="null != #{user.registerMode}">
+                msp_user_info.register_mode = #{user.registerMode},
+            </if>
+            <if test="null != #{user.thirdId}">
+                msp_user_info.third_id = #{user.thirdId},
+            </if>
+        </trim>
+        where msp_user_info.id = #{user.id};
     </update>
+
+
+
+    <!-- -->
     <delete id="delete">
-      delete
-      from msp_user_info
-      where msp_user_info.id = #{id};
+        delete
+        from msp_user_info
+        where msp_user_info.id = #{id};
     </delete>
 </mapper>

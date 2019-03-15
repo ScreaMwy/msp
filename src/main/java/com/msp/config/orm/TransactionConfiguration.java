@@ -22,6 +22,8 @@ public class TransactionConfiguration {
     @Resource(name = "dataSource", type = DataSource.class)
     private DataSource dataSource;
 
+    @Bean(name = "transactionManagement", autowire = Autowire.NO)
+    @Scope(scopeName = "singleton")
     public DataSourceTransactionManager transactionManager() {
         transactionManager = new DataSourceTransactionManager(dataSource);
         return transactionManager;

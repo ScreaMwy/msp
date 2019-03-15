@@ -29,9 +29,9 @@ public enum BussinesError implements CommonError {
     }
 
     @Override
-    public CommonError setErrMsg(String errMsg) {
+    public void setErrMsg(String errMsg) {
         this.errMsg = errMsg;
-        return this;
+        //return this;
     }
 
     @Override

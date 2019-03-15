@@ -30,8 +30,8 @@ public class BussinessException extends Exception implements CommonError {
     }
 
     @Override
-    public CommonError setErrMsg(String errMsg) {
+    public void setErrMsg(String errMsg) {
         this.commonError.setErrMsg(errMsg);
-        return this;
+        //return this;
     }
 }

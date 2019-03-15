@@ -15,6 +15,10 @@ public interface UserInfoDao {
 
     public abstract UserInfoDO findById(@Param("id") Integer id);
 
+    public abstract UserInfoDO findByTelphone(@Param("telphone") String telphone);
+
+    public abstract int getMaxId();
+
     public abstract int add(@Param("user") UserInfoDO userInfoDO);
 
     public abstract int update(@Param("user") UserInfoDO userInfoDO);

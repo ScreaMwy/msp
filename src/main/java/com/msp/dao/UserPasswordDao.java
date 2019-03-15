@@ -10,4 +10,10 @@ import org.apache.ibatis.annotations.Param;
 @Scope(scopeName = "singleton")
 public interface UserPasswordDao {
     public abstract UserPasswordDO findPasswordByUserId(@Param("uid") Integer userId);
+
+    public abstract int getMaxId();
+
+    public abstract int add(@Param("password") UserPasswordDO userPasswordDO);
+
+    public abstract int addSelection(@Param("password") UserPasswordDO userPasswordDO);
 }

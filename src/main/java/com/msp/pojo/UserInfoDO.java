@@ -15,9 +15,11 @@ public class UserInfoDO {
 
     private String thirdId;
 
+    private UserPasswordDO userPasswordDO;
+
     public UserInfoDO() {}
 
-    public UserInfoDO(Integer id, String name, Integer gender, Integer age, String telphone, String registerMode, String thirdId) {
+    public UserInfoDO(Integer id, String name, Integer gender, Integer age, String telphone, String registerMode, String thirdId, UserPasswordDO userPasswordDO) {
         this.id = id;
         this.name = name;
         this.gender = gender;
@@ -25,6 +27,7 @@ public class UserInfoDO {
         this.telphone = telphone;
         this.registerMode = registerMode;
         this.thirdId = thirdId;
+        this.userPasswordDO = userPasswordDO;
     }
 
     public Integer getId() {
@@ -83,6 +86,14 @@ public class UserInfoDO {
         this.thirdId = thirdId;
     }
 
+    public UserPasswordDO getUserPasswordDO() {
+        return userPasswordDO;
+    }
+
+    public void setUserPasswordDO(UserPasswordDO userPasswordDO) {
+        this.userPasswordDO = userPasswordDO;
+    }
+
     @Override
     public String toString() {
         return "UserInfoDO{" +
@@ -93,6 +104,7 @@ public class UserInfoDO {
                 ", telphone='" + telphone + '\'' +
                 ", registerMode='" + registerMode + '\'' +
                 ", thirdId='" + thirdId + '\'' +
+                ", userPasswordDO=" + userPasswordDO +
                 '}';
     }
 }

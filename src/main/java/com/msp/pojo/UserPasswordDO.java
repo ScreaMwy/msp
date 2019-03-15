@@ -7,12 +7,15 @@ public class UserPasswordDO {
 
     private Integer userId;
 
+    private UserInfoDO userInfoDO;
+
     public UserPasswordDO() {}
 
-    public UserPasswordDO(Integer id, String encrypt, Integer userId) {
+    public UserPasswordDO(Integer id, String encrypt, Integer userId, UserInfoDO userInfoDO) {
         this.id = id;
         this.encrypt = encrypt;
         this.userId = userId;
+        this.userInfoDO = userInfoDO;
     }
 
     public Integer getId() {
@@ -39,12 +42,21 @@ public class UserPasswordDO {
         this.userId = userId;
     }
 
+    public UserInfoDO getUserInfoDO() {
+        return userInfoDO;
+    }
+
+    public void setUserInfoDO(UserInfoDO userInfoDO) {
+        this.userInfoDO = userInfoDO;
+    }
+
     @Override
     public String toString() {
         return "UserPasswordDO{" +
                 "id=" + id +
                 ", encrypt='" + encrypt + '\'' +
                 ", userId=" + userId +
+                ", userInfoDO=" + userInfoDO +
                 '}';
     }
 }

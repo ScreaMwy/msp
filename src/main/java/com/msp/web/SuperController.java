@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class SuperController {
-    public final static String CONTENT_ENCTYPE_FORM_ONE = "application/x-www-form-urlencoded";
+    public final static String CONTENT_ENCTYPE_FORM_FRT = "application/x-www-form-urlencoded";
 
-    public final static String CONTENT_ENCTYPE_FORM_TWO = "multipart/form-data";
+    public final static String CONTENT_ENCTYPE_FORM_SND = "multipart/form-data";
 
     //定義exceptionhandler解決未被controller層吸收嘅exception
     @ExceptionHandler(Exception.class)
