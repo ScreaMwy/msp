@@ -22,7 +22,7 @@ public abstract class SuperController {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public Object handlerException(HttpServletRequest request, Exception e) {
+    public Object exceptionHandler(HttpServletRequest request, Exception e) {
         Map<String, Object> responseData = new HashMap<>();
 
         if (e instanceof BussinessException) {

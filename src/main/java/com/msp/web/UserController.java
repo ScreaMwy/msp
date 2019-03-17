@@ -72,9 +72,11 @@ public class UserController extends SuperController {
         userModel = new UserModel();
         userModel.setTelphone(telphone);
         userModel.setEncryptPassword(this.encodeByMD5(password));
-        userService.validateLogin(userModel);
+        userModel = userService.validateLogin(userModel);
 
-        //唔畀用戶信息洩露
+        //將登錄成功的憑證保存到用戶登錄成功的session內
+        this.request.getSession().setAttribute("LOGIN_SUCCESS", true);
+        this.request.getSession().setAttribute("LOGIN_USER", userModel);
         return CommonReturnType.create(null);
     }
 
@@ -111,8 +113,7 @@ public class UserController extends SuperController {
         userModel.setRegisterMode("byPhone");
         userModel.setEncryptPassword(this.encodeByMD5(password));
         userService.registry(userModel);
-        //唔畀用戶信息洩露
-        return CommonReturnType.create(null);
+        return CommonReturnType.create(this.convertFromModel(userModel));
     }
 
     private String encodeByMD5(String data) throws NoSuchAlgorithmException, UnsupportedEncodingException {
@@ -142,7 +143,6 @@ public class UserController extends SuperController {
         //将ottcode通过短信api发送畀用户
         String date = DateFormat.getDateTimeInstance().format(new Date());
         System.out.printf("尊敬嘅用戶(%s)，您收到嘅用戶驗證碼係：%s (%s)\n", telphone, request.getSession().getAttribute(telphone), date);
-
         return CommonReturnType.create("短信發送成功");
     }
 

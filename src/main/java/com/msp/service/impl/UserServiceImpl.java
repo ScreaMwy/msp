@@ -35,6 +35,41 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl() {}
 
+    @Transactional(transactionManager = "transactionManagement")
+    @Override
+    public UserModel validateLogin(UserModel userModel) throws Exception {
+        if (null == userModel) {
+            throw new BussinessException(BussinesError.PARAMETER_VALIDATION_ERROR, "無效用戶");
+        }
+
+        if (StringUtils.isNotEmpty(userModel.getName())
+                || StringUtils.isNotEmpty(userModel.getEncryptPassword())) {
+            //通過用戶手機號獲取用戶信息
+            userInfoDO = userInfoDao.findByTelphone(userModel.getTelphone());
+
+            if (null == userInfoDO) {
+                throw new BussinessException(BussinesError.USER_NOT_EXIST, "用戶不存在或密碼錯誤");
+            }
+
+            userPasswordDO = userPasswordDao.findPasswordByUserId(userInfoDO.getId());
+
+            if (null == userPasswordDO) {
+                throw new BussinessException(BussinesError.USER_NOT_EXIST, "用戶不存在或密碼錯誤");
+            }
+
+            //比較用戶信息中加密嘅密碼是否與傳入來嘅密碼相匹配
+            UserModel newUserModel = this.convertFromDataObject(userInfoDO, userPasswordDO);
+
+            if (!userModel.getEncryptPassword().equals(newUserModel.getEncryptPassword())) {
+                throw new BussinessException(BussinesError.USER_NOT_EXIST, "用戶不存在或密碼錯誤");
+            }
+
+            return newUserModel;
+        }
+
+        return null;
+    }
+
     private UserModel convertFromDataObject(UserInfoDO userInfoDO, UserPasswordDO userPasswordDO) {
         if (null == userInfoDO) {
             return null;
@@ -49,34 +84,12 @@ public class UserServiceImpl implements UserService {
         userModel.setRegisterMode(userInfoDO.getRegisterMode());
         userModel.setThirdPartyId(userInfoDO.getThirdId());
 
-        if (null != userPasswordDO) {
-            userModel.setEncryptPassword(userPasswordDO.getEncrypt());
+        if (null == userPasswordDO) {
+            return null;
         }
 
+        userModel.setEncryptPassword(userPasswordDO.getEncrypt());
         return userModel;
-    }
-
-    @Transactional(transactionManager = "transactionManagement")
-    @Override
-    public void validateLogin(UserModel userModel) throws Exception {
-        if (null == userModel) {
-            throw new BussinessException(BussinesError.PARAMETER_VALIDATION_ERROR, "無效用戶");
-        }
-
-        if (StringUtils.isNotEmpty(userModel.getName())
-                || StringUtils.isNotEmpty(userModel.getEncryptPassword())) {
-            //通過用戶手機號獲取用戶信息
-            userInfoDO = userInfoDao.findByTelphone(userModel.getTelphone());
-
-            //比較用戶信息中加密嘅密碼是否與傳入來嘅密碼相匹配
-            userPasswordDO = userPasswordDao.findUserIdByPassword(userModel.getEncryptPassword());
-
-            if (null != userInfoDO || null != userPasswordDO) {
-                if (!userInfoDO.getId().equals(userPasswordDO.getUserId())) {
-                    throw new BussinessException(BussinesError.USER_NOT_EXIST, "用戶不存在或密碼錯誤");
-                }
-            }
-        }
     }
 
     @Transactional(transactionManager = "transactionManagement")
