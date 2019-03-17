@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
 public interface UserInfoDao {
     public abstract List<? extends UserInfoDO> find();
 
-    public abstract UserInfoDO findById(@Param("id") Integer id);
+    public abstract List<? extends UserInfoDO> findByName(@Param("name") String name);
 
     public abstract UserInfoDO findByTelphone(@Param("telphone") String telphone);
 

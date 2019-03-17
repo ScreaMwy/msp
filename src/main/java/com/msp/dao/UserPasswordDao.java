@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 @Repository("userPasswordDao")
 @Scope(scopeName = "singleton")
 public interface UserPasswordDao {
-    public abstract UserPasswordDO findPasswordByUserId(@Param("uid") Integer userId);
+    public abstract UserPasswordDO findUserIdByPassword(@Param("encrypt") String encryptPassword);
 
     public abstract int getMaxId();
 

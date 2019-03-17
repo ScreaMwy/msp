@@ -1,5 +1,6 @@
 package com.msp.web;
 
+import com.mchange.util.Base64Encoder;
 import com.msp.service.UserService;
 import com.msp.service.model.UserModel;
 import com.msp.web.viewobject.UserVO;
@@ -7,9 +8,14 @@ import com.msp.response.CommonReturnType;
 import com.msp.error.BussinesError;
 import com.msp.error.BussinessException;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -32,10 +38,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.http.HttpStatus;
+import sun.misc.BASE64Encoder;
 
 @Controller("userController")
 @Scope(scopeName = "singleton")
-@CrossOrigin
+@CrossOrigin(allowCredentials = "true", allowedHeaders = {"*"})
 @RequestMapping(path = {"/user", "/user/"})
 public class UserController extends SuperController {
     @Autowired
@@ -49,6 +56,27 @@ public class UserController extends SuperController {
     private UserVO userVO;
 
     public UserController() {}
+
+    //用戶登陆接口
+    @RequestMapping(path = {"/login", "/login/"}, method = {RequestMethod.POST})
+    @ResponseBody
+    public CommonReturnType usereLogin(@RequestParam(name = "telphone", required = true) String telphone,
+                                       @RequestParam(name = "password", required = true) String password)
+            throws Exception {
+        //入參校驗
+        if (null == telphone || "" == telphone || null == password || "" == password) {
+            throw new BussinessException(BussinesError.PARAMETER_VALIDATION_ERROR, "用戶名不能為空");
+        }
+
+        //校驗用戶登錄是否合法
+        userModel = new UserModel();
+        userModel.setTelphone(telphone);
+        userModel.setEncryptPassword(this.encodeByMD5(password));
+        userService.validateLogin(userModel);
+
+        //唔畀用戶信息洩露
+        return CommonReturnType.create(null);
+    }
 
     //用戶注冊接口
     @RequestMapping(path = {"/registry", "/registry/"},
@@ -81,10 +109,20 @@ public class UserController extends SuperController {
         userModel.setAge(age);
         userModel.setTelphone(telphone);
         userModel.setRegisterMode("byPhone");
-        //String test = MD5Encoder.encode(password.getBytes("utf-8"));
-        userModel.setEncryptPassword(Base64.encodeBase64String(password.getBytes("utf-8")));
+        userModel.setEncryptPassword(this.encodeByMD5(password));
         userService.registry(userModel);
-        return CommonReturnType.create(userModel);
+        //唔畀用戶信息洩露
+        return CommonReturnType.create(null);
+    }
+
+    private String encodeByMD5(String data) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        //確定計算方法
+        MessageDigest md5Encoder = MessageDigest.getInstance("MD5");
+        BASE64Encoder base64Encoder = new BASE64Encoder();
+
+        //加密字符串
+        String encodedData = base64Encoder.encode(md5Encoder.digest(data.getBytes("utf-8")));
+        return encodedData;
     }
 
     @RequestMapping(path = {"/recieveOtp", "/recieveOtp/"},
@@ -102,26 +140,10 @@ public class UserController extends SuperController {
         request.getSession().setAttribute(telphone, otpCode);
 
         //将ottcode通过短信api发送畀用户
-        System.out.printf("telphone:%s\notpCode:%s\n", telphone, request.getSession().getAttribute(telphone));
+        String date = DateFormat.getDateTimeInstance().format(new Date());
+        System.out.printf("尊敬嘅用戶(%s)，您收到嘅用戶驗證碼係：%s (%s)\n", telphone, request.getSession().getAttribute(telphone), date);
 
         return CommonReturnType.create("短信發送成功");
-    }
-
-    @RequestMapping(path = {"/findId", "/findId/"}, method = {RequestMethod.GET, RequestMethod.POST})
-    @ResponseBody
-    public CommonReturnType getUserId(@RequestParam(name = "uid", required = true) Integer id) throws BussinessException {
-        //調用service層來獲取用戶嘅id號，並且返回畀前端
-        userModel = userService.getUserById(id);
-
-        //如果獲取到嘅對應用戶訊息唔存在
-        if (null == userModel) {
-            throw new BussinessException(BussinesError.USER_NOT_EXIST);
-            //userModel.setEncryptPassword("123142141");
-        }
-
-        //將核心领域嘅Model类转换为前端嘅viewobject
-        userVO = convertFromModel(userModel);
-        return CommonReturnType.create(userVO);
     }
 
     private UserVO convertFromModel(UserModel userModel) {

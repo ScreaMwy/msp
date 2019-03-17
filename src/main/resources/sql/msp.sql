@@ -27,6 +27,7 @@ create table msp_user_password (
 
 alter table msp_user_info add constraint uk_user_info_telphone unique key(telphone);
 alter table msp_user_password add constraint msp_user_password_user_id unique key(user_id);
+alter table msp_user_info add constraint uk_user_info_name unique key(name);
 
 --insert into msp_user_info values("", "", "", "", "", "", "");
 insert into msp_user_info(name, gender, age, telphone, register_mode, third_id) values("A", "1", "23", "12345678901", "weixin", "2345");

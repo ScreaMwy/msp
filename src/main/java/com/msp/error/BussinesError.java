@@ -6,8 +6,10 @@ public enum BussinesError implements CommonError {
 
     UNKNOWN_ERROR(105, "未知錯誤"),
 
-    //20000開頭係用戶相關錯誤定義
-    USER_NOT_EXIST(200, "用戶唔存在");
+    //用戶相關錯誤定義：200
+    USER_NOT_EXIST(200, "用戶唔存在"),
+
+    USER_EXIST(204, "用戶手機號已經存在");
 
     private int errCode;
 

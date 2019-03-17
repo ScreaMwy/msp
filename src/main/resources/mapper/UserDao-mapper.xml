@@ -25,7 +25,7 @@
     </select>
 
     <!-- -->
-    <select id="findById" resultType="com.msp.pojo.UserInfoDO" resultMap="userInfoMap">
+    <select id="findByName" resultType="com.msp.pojo.UserInfoDO" resultMap="userInfoMap">
         select  msp_user_info.id,
                 msp_user_info.name,
                 msp_user_info.gender,
@@ -34,7 +34,7 @@
                 msp_user_info.register_mode,
                 msp_user_info.third_id
         from msp_user_info
-        where msp_user_info.id = #{id};
+        where msp_user_info.name = #{name};
     </select>
 
     <!-- -->
