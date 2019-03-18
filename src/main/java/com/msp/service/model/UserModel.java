@@ -1,20 +1,33 @@
 package com.msp.service.model;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 public class UserModel {
     private Integer id;
 
+    @NotBlank(message = "用戶名不能為空")
     private String name;
 
+    @NotNull(message = "性別必須填寫")
     private Integer gender;
 
+    @NotNull(message = "性別必須填寫")
+    @Max(value = 120, message = "年齡必須小於120歲")
+    @Min(value = 1, message = "年齡必須大於0歲")
     private Integer age;
 
+    @NotBlank(message = "用戶名不能為空")
     private String telphone;
 
     private String registerMode;
 
     private String thirdPartyId;
 
+    @NotBlank(message = "密碼不能為空")
     private String encryptPassword;
 
     public UserModel() {}

@@ -1,6 +1,5 @@
 package com.msp.service.impl;
 
-import javax.annotation.Resource;
 
 import com.msp.dao.UserPasswordDao;
 import com.msp.error.BussinesError;
@@ -10,8 +9,10 @@ import com.msp.pojo.UserPasswordDO;
 import com.msp.dao.UserInfoDao;
 import com.msp.service.UserService;
 import com.msp.service.model.UserModel;
+import javax.annotation.Resource;
 
-import org.apache.catalina.User;
+import com.msp.validation.ValidationResult;
+import com.msp.validation.ValidatorImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.context.annotation.Scope;
@@ -21,6 +22,9 @@ import org.springframework.dao.DuplicateKeyException;
 @Service("userServiceImpl")
 @Scope(scopeName = "singleton")
 public class UserServiceImpl implements UserService {
+    @Resource(name = "validatorImpl", type = ValidatorImpl.class)
+    private ValidatorImpl validator;
+
     @Resource(name = "userInfoDao", type = UserInfoDao.class)
     private UserInfoDao userInfoDao;
 
@@ -33,6 +37,8 @@ public class UserServiceImpl implements UserService {
 
     private UserModel userModel;
 
+    private ValidationResult result;
+
     public UserServiceImpl() {}
 
     @Transactional(transactionManager = "transactionManagement")
@@ -42,32 +48,30 @@ public class UserServiceImpl implements UserService {
             throw new BussinessException(BussinesError.PARAMETER_VALIDATION_ERROR, "無效用戶");
         }
 
-        if (StringUtils.isNotEmpty(userModel.getName())
-                || StringUtils.isNotEmpty(userModel.getEncryptPassword())) {
-            //通過用戶手機號獲取用戶信息
-            userInfoDO = userInfoDao.findByTelphone(userModel.getTelphone());
-
-            if (null == userInfoDO) {
-                throw new BussinessException(BussinesError.USER_NOT_EXIST, "用戶不存在或密碼錯誤");
-            }
-
-            userPasswordDO = userPasswordDao.findPasswordByUserId(userInfoDO.getId());
-
-            if (null == userPasswordDO) {
-                throw new BussinessException(BussinesError.USER_NOT_EXIST, "用戶不存在或密碼錯誤");
-            }
-
-            //比較用戶信息中加密嘅密碼是否與傳入來嘅密碼相匹配
-            UserModel newUserModel = this.convertFromDataObject(userInfoDO, userPasswordDO);
-
-            if (!userModel.getEncryptPassword().equals(newUserModel.getEncryptPassword())) {
-                throw new BussinessException(BussinesError.USER_NOT_EXIST, "用戶不存在或密碼錯誤");
-            }
-
-            return newUserModel;
+        //入參校驗
+        result = validator.validate(userModel);
+        if (result.isError()) {
+            throw new BussinessException(BussinesError.PARAMETER_VALIDATION_ERROR, result.getErrMsg());
         }
 
-        return null;
+        //通過用戶手機號獲取用戶信息
+        userInfoDO = userInfoDao.findByTelphone(userModel.getTelphone());
+        if (null == userInfoDO) {
+            throw new BussinessException(BussinesError.USER_NOT_EXIST, "用戶不存在或密碼錯誤");
+        }
+
+        userPasswordDO = userPasswordDao.findPasswordByUserId(userInfoDO.getId());
+        if (null == userPasswordDO) {
+            throw new BussinessException(BussinesError.USER_NOT_EXIST, "用戶不存在或密碼錯誤");
+        }
+
+        //比較用戶信息中加密嘅密碼是否與傳入來嘅密碼相匹配
+        UserModel newUserModel = this.convertFromDataObject(userInfoDO, userPasswordDO);
+        if (!userModel.getEncryptPassword().equals(newUserModel.getEncryptPassword())) {
+            throw new BussinessException(BussinesError.USER_NOT_EXIST, "用戶不存在或密碼錯誤");
+        }
+
+        return newUserModel;
     }
 
     private UserModel convertFromDataObject(UserInfoDO userInfoDO, UserPasswordDO userPasswordDO) {
@@ -99,23 +103,22 @@ public class UserServiceImpl implements UserService {
             throw new BussinessException(BussinesError.PARAMETER_VALIDATION_ERROR, "無效用戶");
         }
 
-        if (StringUtils.isNotEmpty(userModel.getName())
-                || StringUtils.isNotEmpty(String.valueOf(userModel.getGender()))
-                || StringUtils.isNotEmpty(String.valueOf(userModel.getAge()))
-                || StringUtils.isNotEmpty(userModel.getTelphone())) {
-            //
-            userInfoDO = convertUserToDataObject(userModel);
-            try {
-                userInfoDao.add(userInfoDO);
-            } catch (DuplicateKeyException e) {
-                throw new BussinessException(BussinesError.USER_EXIST);
-            }
-
-
-            userPasswordDO = convertPasswordToDataOjbect(userModel);
-            userPasswordDO.setUserId(userInfoDao.findByTelphone(userInfoDO.getTelphone()).getId());
-            userPasswordDao.addSelection(userPasswordDO);
+        //
+        result = validator.validate(userModel);
+        if (result.isError()) {
+            throw new BussinessException(BussinesError.PARAMETER_VALIDATION_ERROR, result.getErrMsg());
         }
+
+        userInfoDO = convertUserToDataObject(userModel);
+        try {
+            userInfoDao.add(userInfoDO);
+        } catch (DuplicateKeyException e) {
+            throw new BussinessException(BussinesError.USER_EXIST);
+        }
+
+        userPasswordDO = convertPasswordToDataOjbect(userModel);
+        userPasswordDO.setUserId(userInfoDao.findByTelphone(userInfoDO.getTelphone()).getId());
+        userPasswordDao.addSelection(userPasswordDO);
     }
 
     private UserInfoDO convertUserToDataObject(UserModel userModel) {

@@ -7,7 +7,6 @@ import com.msp.web.viewobject.UserVO;
 import com.msp.response.CommonReturnType;
 import com.msp.error.BussinesError;
 import com.msp.error.BussinessException;
-
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,13 +15,11 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Date;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.ServletContext;
-
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.stereotype.Controller;
@@ -63,11 +60,6 @@ public class UserController extends SuperController {
     public CommonReturnType usereLogin(@RequestParam(name = "telphone", required = true) String telphone,
                                        @RequestParam(name = "password", required = true) String password)
             throws Exception {
-        //入參校驗
-        if (null == telphone || "" == telphone || null == password || "" == password) {
-            throw new BussinessException(BussinesError.PARAMETER_VALIDATION_ERROR, "用戶名不能為空");
-        }
-
         //校驗用戶登錄是否合法
         userModel = new UserModel();
         userModel.setTelphone(telphone);
