@@ -7,6 +7,7 @@ import com.msp.web.viewobject.UserVO;
 import com.msp.response.CommonReturnType;
 import com.msp.error.BussinesError;
 import com.msp.error.BussinessException;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,11 +16,13 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Date;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.ServletContext;
+
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.stereotype.Controller;
@@ -35,6 +38,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.http.HttpStatus;
+
 import sun.misc.BASE64Encoder;
 
 @Controller("userController")
@@ -45,7 +49,7 @@ public class UserController extends SuperController {
     @Autowired
     private  HttpServletRequest request;
 
-    @Resource(name = "userServiceImpl", type = UserService.class)
+    @Resource(name = "userService", type = UserService.class)
     private UserService userService;
 
     private UserModel userModel;

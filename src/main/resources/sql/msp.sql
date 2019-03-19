@@ -3,6 +3,7 @@ create database msp;
 drop table msp_user_password;
 drop table msp_user_info;
 
+--User Table
 create table msp_user_info (
   id int not null auto_increment,
   name varchar(65) not null,
@@ -39,3 +40,25 @@ insert into msp_user_info(name, gender, age, telphone, register_mode, third_id) 
 insert into msp_user_password(encrypt, user_id) values("qweasdfasd", "1");
 insert into msp_user_password(encrypt, user_id) values("qazwsxedcrfvtgb=", "2");
 
+
+--Product Table
+create table msp_product_item (
+  id int not null auto_increment,
+  name varchar(250) not null default "",
+  price decimal not null default 0,
+  description varchar(500) not null default "",
+  sales int not null default 0,
+  img_url varchar(250) not null default "",
+  constraint pk_id primary key(id)
+) engine=InnoDB, default charset=utf8, auto_increment=1;
+
+create table msp_product_stock (
+  id int not null auto_increment,
+  stock int not null default 0,
+  item_id int not null,
+  constraint pk_id primary key(id),
+  constraint fk_id foreign key(item_id) references msp_product_item(id) on delete cascade on update cascade
+) engine=InnoDB, default charset=utf8, auto_increment=1;
+
+alter table msp_product_item add constraint uk_name unique key(name);
+alter table msp_product_stock add constraint uk_item_id unique key(item_id);

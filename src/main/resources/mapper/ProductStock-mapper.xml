@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msp.dao.ProductStockDao">
+    <resultMap id="productStockMap" type="com.msp.dao.ProductStockDao">
+        <id column="id" property="id"/>
+        <result column="stock" property="stock"/>
+        <result column="item_id" property="itemId"/>
+    </resultMap>
+
+    <insert id="add" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert
+        into msp_product_stock
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="null != productStock.stock">
+                stock,
+            </if>
+            <if test="null != productStock.itemId">
+                item_id,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=");" suffixOverrides=",">
+            <if test="null != productStock.stock">
+                #{productStock.stock},
+            </if>
+            <if test="null != productStock.itemId">
+                #{productStock.itemId},
+            </if>
+        </trim>
+    </insert>
+</mapper>

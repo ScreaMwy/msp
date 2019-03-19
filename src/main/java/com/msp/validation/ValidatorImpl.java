@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Scope;
 import org.springframework.beans.factory.InitializingBean;
 
-@Component("validatorImpl")
+@Component("validator")
 @Scope(scopeName = "prototype")
 public class ValidatorImpl implements InitializingBean {
     private Validator validator;

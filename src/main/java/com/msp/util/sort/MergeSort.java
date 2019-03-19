@@ -22,13 +22,12 @@ public final class MergeSort {
     public void merge(int[] datas, int low, int mid, int high) {
         final int DATAS_LOW_SIZE = mid - low + 1;
         final int DATAS_HIGH_SIZE = high - mid;
-
         //datas:[.., 1, 2, 3, 4, 5, 6, ..]
         //index: ... 5  6  7  8  9  10  ...
         // mid = (10 + 5) / 2 = 7
         int[] dataLow = new int[DATAS_LOW_SIZE + 1];
         int[] dataHigh = new int[DATAS_HIGH_SIZE + 1];
-
+        //
         dataLow[DATAS_LOW_SIZE] = this.MAX_INTEGER;
         dataHigh[DATAS_HIGH_SIZE] = this.MAX_INTEGER;
 
@@ -42,7 +41,6 @@ public final class MergeSort {
 
         int i = 0;
         int j = 0;
-
         for (int k = low; k <= high; k++) {
             if (dataLow[i] <= dataHigh[j]) {
                 datas[k] = dataLow[i++];

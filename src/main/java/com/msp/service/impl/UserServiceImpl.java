@@ -9,20 +9,21 @@ import com.msp.pojo.UserPasswordDO;
 import com.msp.dao.UserInfoDao;
 import com.msp.service.UserService;
 import com.msp.service.model.UserModel;
-import javax.annotation.Resource;
-
 import com.msp.validation.ValidationResult;
 import com.msp.validation.ValidatorImpl;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.context.annotation.Scope;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.dao.DuplicateKeyException;
 
-@Service("userServiceImpl")
+@Service("userService")
 @Scope(scopeName = "singleton")
 public class UserServiceImpl implements UserService {
-    @Resource(name = "validatorImpl", type = ValidatorImpl.class)
+    @Resource(name = "validator", type = ValidatorImpl.class)
     private ValidatorImpl validator;
 
     @Resource(name = "userInfoDao", type = UserInfoDao.class)
@@ -75,7 +76,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserModel convertFromDataObject(UserInfoDO userInfoDO, UserPasswordDO userPasswordDO) {
-        if (null == userInfoDO) {
+        if (null == userInfoDO || null == userPasswordDO) {
             return null;
         }
 
@@ -87,11 +88,6 @@ public class UserServiceImpl implements UserService {
         userModel.setTelphone(userInfoDO.getTelphone());
         userModel.setRegisterMode(userInfoDO.getRegisterMode());
         userModel.setThirdPartyId(userInfoDO.getThirdId());
-
-        if (null == userPasswordDO) {
-            return null;
-        }
-
         userModel.setEncryptPassword(userPasswordDO.getEncrypt());
         return userModel;
     }

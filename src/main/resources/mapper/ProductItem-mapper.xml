@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msp.dao.ProductItemDao">
+    <resultMap id="productItemMap" type="com.msp.pojo.ProductItemDO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="price" property="price"/>
+        <result column="description" property="description"/>
+        <result column="sales" property="sales"/>
+        <result column="img_url" property="imgUrl"/>
+    </resultMap>
+
+    <!--<select id="" resultType="" resultMap="">-->
+    <!--</select>-->
+
+    <select id="findIdByName" resultType="com.msp.pojo.ProductItemDO" resultMap="productItemMap">
+        select  msp_product_item.id,
+                msp_product_item.name,
+                msp_product_item.price,
+                msp_product_item.description,
+                msp_product_item.sales,
+                msp_product_item.img_url
+        from msp_product_item
+        where msp_product_item.name = #{name};
+    </select>
+
+    <!--<insert id="" useGeneratedKeys="true" keyColumn="id" keyProperty="id">-->
+    <!--</insert>-->
+
+    <insert id="add" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert
+        into msp_product_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="null != productItem.name">
+                name,
+            </if>
+            <if test="null != productItem.price">
+                price,
+            </if>
+            <if test="null != productItem.description">
+                description,
+            </if>
+            <if test="null != productItem.sales">
+                sales,
+            </if>
+            <if test="null != productItem.imgUrl">
+                img_url,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=");" suffixOverrides=",">
+            <if test="null != productItem.name">
+                #{productItem.name},
+            </if>
+            <if test="null != productItem.price">
+                #{productItem.price},
+            </if>
+            <if test="null != productItem.description">
+                #{productItem.description},
+            </if>
+            <if test="null != productItem.sales">
+                #{productItem.sales},
+            </if>
+            <if test="null != productItem.imgUrl">
+                #{productItem.imgUrl},
+            </if>
+        </trim>
+    </insert>
+
+    <!--<update id="" useGeneratedKeys="true" keyColumn="id" keyProperty="id">-->
+    <!--</update>-->
+
+    <!--<update id="" useGeneratedKeys="true" keyColumn="id" keyProperty="id">-->
+    <!--</update>-->
+
+    <delete id="deleteProductById">
+        delete
+        from msp_product_item
+        where msp_product_item.id = #{id};
+    </delete>
+</mapper>

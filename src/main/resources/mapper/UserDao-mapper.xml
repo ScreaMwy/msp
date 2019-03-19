@@ -87,7 +87,8 @@
                 third_id,
             </if>
         </trim>
-        <trim prefix="values(" suffix=");" suffixOverrides=",">
+        values
+        <trim prefix="(" suffix=");" suffixOverrides=",">
             <if test="null != #{user.name}">
                 #{user.name},
             </if>
